@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="img/png" sizes="16x16" href="icons8-shop-32.png">
+  <title>Brand</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .chat-container {
+      width: 400px;
+      height: 500px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .chat-header {
+      background: #0084ff;
+      color: white;
+      text-align: center;
+      padding: 12px;
+      font-weight: bold;
+    }
+    .chat-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+    }
+    .message {
+      margin: 8px 0;
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 75%;
+    }
+    .sent {
+      background: #0084ff;
+      color: white;
+      margin-left: auto;
+      text-align: right;
+    }
+    .received {
+      background: #e5e5ea;
+      color: black;
+      margin-right: auto;
+      text-align: left;
+    }
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+    .chat-input input {
+      flex: 1;
+      border: none;
+      padding: 10px;
+      font-size: 14px;
+    }
+    .chat-input button {
+      background: #0084ff;
+      color: white;
+      border: none;
+      padding: 0 20px;
+      cursor: pointer;
+    }
+    .chat-input input:focus {
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">💬 Chat Brand </div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input">
+      <input type="text" id="chatInput" placeholder="Nhập tin nhắn...">
+      <button onclick="sendMessage()">Gửi</button>
+      <button class="mic-btn" onclick="startListening()">🎙️</button>
+    </div>
+  <script>
+    function sendMessage(text = null) {
+      const input = document.getElementById("chatInput");
+      const messageText = text || input.value.trim();
+      if (messageText === "") return;
+
+      const chatMessages = document.getElementById("chatMessages");
+
+      // Người dùng gửi
+      const message = document.createElement("div");
+      message.className = "message sent";
+      message.innerText = messageText;
+      chatMessages.appendChild(message);
+
+      input.value = "";
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      // Bot trả lời
+      setTimeout(() => {
+        const reply = document.createElement("div");
+        reply.className = "message received";
+        reply.innerText = getBotReply(messageText);
+        chatMessages.appendChild(reply);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }, 600);
+    }
+
+    // Hàm xử lý logic trả lời
+    function getBotReply(msg) {
+      msg = msg.toLowerCase();
+
+      if (msg.includes("chào")) {
+        return "Xin chào bạn 👋, mình là trợ lý ảo!";
+      } else if (msg.includes("mấy giờ") || msg.includes("giờ rồi")) {
+        return "Bây giờ là " + new Date().toLocaleTimeString();
+      } else if (msg.includes("ngày bao nhiêu")) {
+        return "Hôm nay là " + new Date().toLocaleDateString();
+      } else if (msg.includes("tên gì")) {
+        return "Mình là trợ lý ảo mini 🤖";
+      } else if (msg.includes("tạm biệt")) {
+        return "Tạm biệt, hẹn gặp lại bạn 👋";
+      } 
+      else {
+  const replies = [
+    "Câu hỏi hay đấy! Mình sẽ tìm hiểu thêm 🤔",
+    "Bạn đang hỏi: '" + msg + "'. Mình sẽ giải đáp cho bạn.",
+    "Thông tin này chưa có sẵn, nhưng mình sẽ học thêm 📘",
+    "Mình sẽ ghi nhận để hỗ trợ bạn tốt hơn lần sau ✅"
+  ];
+  return replies[Math.floor(Math.random() * replies.length)];
+}
+
+    }
+
+    // Gửi bằng Enter
+    document.getElementById("chatInput").addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // 🎤 Nhận giọng nói
+    function startListening() {
+      if (!('webkitSpeechRecognition' in window)) {
+        alert("Trình duyệt của bạn   hỗ trợ nhận diện giọng nói!");
+        return;
+      }
+
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = "vi-VN";
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        sendMessage(transcript);
+      };
+      recognition.start();
+    }
+  </script>
+  </body>
+</html>
